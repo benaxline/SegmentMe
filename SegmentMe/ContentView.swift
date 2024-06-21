@@ -14,33 +14,44 @@ struct ContentView: View {
     
     var body: some View {
         
+        
+        
+        
         VStack {
-            Spacer()
-            ScrollView {
-                ForEach(0..<selectedImages.count, id: \.self) { i in
-                    selectedImages[i]
-                        .resizable()
-                        .scaledToFit()
-                }
-            }
-                
             
-            PhotosPicker("Select Images",
-                         selection: $pickerItems,
-                         matching: .images)
+            Text("Welcome to SegmentMe!")
+                .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+                .padding()
+            ImportingView()
             
-            Spacer()
-        }
-        .onChange(of: pickerItems) {
-            Task {
-                selectedImages.removeAll()
-                
-                for item in pickerItems {
-                    if let loadedImage = try await item.loadTransferable(type: Image.self) {
-                        selectedImages.append(loadedImage)
-                    }
-                }
-            }
+            
+            
+//            ScrollView {
+//                ForEach(0..<selectedImages.count, id: \.self) { i in
+//                    selectedImages[i]
+//                        .resizable()
+//                        .scaledToFit()
+//                }
+//            }
+//                
+//            Spacer()
+//            
+//            PhotosPicker("Select Images",
+//                         selection: $pickerItems,
+//                         matching: .images)
+//            
+//            Spacer()
+//        }
+//        .onChange(of: pickerItems) {
+//            Task {
+//                selectedImages.removeAll()
+//                
+//                for item in pickerItems {
+//                    if let loadedImage = try await item.loadTransferable(type: Image.self) {
+//                        selectedImages.append(loadedImage)
+//                    }
+//                }
+//            }
         }
         .frame(minWidth: 500, minHeight: 500)
     }
