@@ -20,7 +20,8 @@ struct ImportingView: View {
                     Image(nsImage: images[index])
                         .resizable()
                         .scaledToFit()
-                        .frame(height: 100)
+                        .frame(width: 50, height: 50)
+                        .cornerRadius(10)
                         .onTapGesture {
                             selectedImage = images[index]
                     }
@@ -28,6 +29,7 @@ struct ImportingView: View {
                     
                     Text("\(imageNames[index])")
                 }
+                .padding(.vertical, 4)
             }
             .navigationTitle("Your Photos")
             .frame(minWidth: 300)
@@ -38,12 +40,10 @@ struct ImportingView: View {
                     }){
                         Label("", systemImage: "square.and.arrow.down")
                     }
-                    .padding()
                     .fileImporter(
                         isPresented: $importing,
                         allowedContentTypes: [.image],
-                        allowsMultipleSelection: true) {
-                            result in
+                        allowsMultipleSelection: true) { result in
                             switch result {
                             case .success(let files):
                                 files.forEach { file in
