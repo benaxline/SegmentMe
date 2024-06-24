@@ -20,7 +20,7 @@
 		B5425B462C26004A00B9FA30 /* ImageRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5425B452C26004A00B9FA30 /* ImageRow.swift */; };
 		B5425B482C2603D200B9FA30 /* ImportingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5425B472C2603D200B9FA30 /* ImportingView.swift */; };
 		B5425B4A2C260B1000B9FA30 /* SideImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5425B492C260B1000B9FA30 /* SideImageView.swift */; };
-		B5425B4E2C29D2EA00B9FA30 /* segmentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5425B4D2C29D2EA00B9FA30 /* segmentation.swift */; };
+		B5425B4E2C29D2EA00B9FA30 /* Segmentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5425B4D2C29D2EA00B9FA30 /* Segmentation.swift */; };
 		B5425B502C29D44F00B9FA30 /* DeepLabV3.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = B5425B4F2C29D44E00B9FA30 /* DeepLabV3.mlpackage */; };
 		B5425B522C29EFA400B9FA30 /* NSImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5425B512C29EFA400B9FA30 /* NSImageExtensions.swift */; };
 /* End PBXBuildFile section */
@@ -60,7 +60,7 @@
 		B5425B452C26004A00B9FA30 /* ImageRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageRow.swift; sourceTree = "<group>"; };
 		B5425B472C2603D200B9FA30 /* ImportingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportingView.swift; sourceTree = "<group>"; };
 		B5425B492C260B1000B9FA30 /* SideImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideImageView.swift; sourceTree = "<group>"; };
-		B5425B4D2C29D2EA00B9FA30 /* segmentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = segmentation.swift; sourceTree = "<group>"; };
+		B5425B4D2C29D2EA00B9FA30 /* Segmentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Segmentation.swift; sourceTree = "<group>"; };
 		B5425B4F2C29D44E00B9FA30 /* DeepLabV3.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = DeepLabV3.mlpackage; sourceTree = "<group>"; };
 		B5425B512C29EFA400B9FA30 /* NSImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSImageExtensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -117,7 +117,7 @@
 			children = (
 				B5425B062C24A7F400B9FA30 /* SegmentMeApp.swift */,
 				B5425B4F2C29D44E00B9FA30 /* DeepLabV3.mlpackage */,
-				B5425B4D2C29D2EA00B9FA30 /* segmentation.swift */,
+				B5425B4D2C29D2EA00B9FA30 /* Segmentation.swift */,
 				B5425B512C29EFA400B9FA30 /* NSImageExtensions.swift */,
 				B5425B082C24A7F400B9FA30 /* ContentView.swift */,
 				B5425B412C25FE4200B9FA30 /* photosModel.swift */,
@@ -292,7 +292,7 @@
 				B5425B092C24A7F400B9FA30 /* ContentView.swift in Sources */,
 				B5425B522C29EFA400B9FA30 /* NSImageExtensions.swift in Sources */,
 				B5425B072C24A7F400B9FA30 /* SegmentMeApp.swift in Sources */,
-				B5425B4E2C29D2EA00B9FA30 /* segmentation.swift in Sources */,
+				B5425B4E2C29D2EA00B9FA30 /* Segmentation.swift in Sources */,
 				B5425B462C26004A00B9FA30 /* ImageRow.swift in Sources */,
 				B5425B442C25FF3600B9FA30 /* imageData.swift in Sources */,
 				B5425B422C25FE4200B9FA30 /* photosModel.swift in Sources */,
