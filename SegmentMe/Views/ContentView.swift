@@ -53,7 +53,7 @@ struct ContentView: View {
     private func selectImage() {
         let panel = NSOpenPanel()
         panel.canChooseFiles = true
-        panel.allowedFileTypes = ["png", "jpg", "jpeg"]
+        panel.allowedContentTypes = [.png, .jpeg]
         
         panel.begin { response in
             if response == .OK, let url = panel.url, let image = NSImage(contentsOf: url) {
@@ -63,8 +63,10 @@ struct ContentView: View {
     }
 
     private func segmentImage(image: NSImage) {
+        // Ensure the model is loaded and the image is available as CGImage
         guard let model = try? DeepLabV3(configuration: .init()),
               let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+            print("Failed to load model or image.")
             return
         }
 
@@ -72,9 +74,31 @@ struct ContentView: View {
         let handler = VNImageRequestHandler(ciImage: ciImage, options: [:])
 
         do {
-            let request = VNCoreMLRequest(model: try VNCoreMLModel(for: model.model)) { request, error in
-                if let results = request.results as? [VNPixelBufferObservation], let pixelBuffer = results.first?.pixelBuffer {
-                    self.segmentedImage = NSImage(pixelBuffer: pixelBuffer)
+            let visionModel = try VNCoreMLModel(for: model.model)
+            let request = VNCoreMLRequest(model: visionModel) { request, error in
+                if let error = error {
+                    print("Error during segmentation: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let results = request.results as? [VNPixelBufferObservation], !results.isEmpty else {
+                    print("No valid results found.")
+                    return
+                }
+                
+                if let pixelBuffer = results.first?.pixelBuffer {
+                    // Verify pixel buffer content
+                    print("Pixel Buffer Width: \(CVPixelBufferGetWidth(pixelBuffer))")
+                    print("Pixel Buffer Height: \(CVPixelBufferGetHeight(pixelBuffer))")
+
+                    if let segmentedImage = self.convert(pixelBuffer: pixelBuffer) {
+                        self.segmentedImage = segmentedImage
+                        print("Segmentation successful, image updated.")
+                    } else {
+                        print("Error in converting image.")
+                    }
+                } else {
+                    print("No pixel buffer found in results.")
                 }
             }
             try handler.perform([request])
@@ -82,8 +106,34 @@ struct ContentView: View {
             print("Failed to perform image segmentation: \(error)")
         }
     }
-}
 
+    private func convert(pixelBuffer: CVPixelBuffer) -> NSImage? {
+        CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
+        defer { CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly) }
+
+        guard let baseAddress = CVPixelBufferGetBaseAddress(pixelBuffer) else {
+            print("Failed to get base address of pixel buffer.")
+            return nil
+        }
+        
+        let bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
+        let width = CVPixelBufferGetWidth(pixelBuffer)
+        let height = CVPixelBufferGetHeight(pixelBuffer)
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+
+        guard let context = CGContext(data: baseAddress, width: width, height: height, bitsPerComponent: 8, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue) else {
+            print("Failed to create CGContext.")
+            return nil
+        }
+
+        guard let cgImage = context.makeImage() else {
+            print("Failed to create CGImage from CGContext.")
+            return nil
+        }
+
+        return NSImage(cgImage: cgImage, size: NSSize(width: width, height: height))
+    }
+}
 
 #Preview {
     ContentView()
