@@ -17,6 +17,7 @@ struct ContentView: View {
         VStack {
         
             ImportingView()
+            
         }
         .frame(minWidth: 500, minHeight: 500)
     }
