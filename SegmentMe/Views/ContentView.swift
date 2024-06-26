@@ -43,6 +43,7 @@ struct ContentView: View {
             Button("Segment Image") {
                 if let inputImage = inputImage {
                     segmentImage(image: inputImage)
+                    
                 }
             }
             .padding()
@@ -61,68 +62,112 @@ struct ContentView: View {
             }
         }
     }
-
+    
     private func segmentImage(image: NSImage) {
-        // Ensure the model is loaded and the image is available as CGImage
-        guard let model = try? DeepLabV3(configuration: .init()) else {
-            print("Failed to load model.")
+        // load model
+        var model = DeepLabV3()   // depreicated
+        var request: VNCoreMLRequest?
+        
+        // setup model
+        if let visionModel = try? VNCoreMLModel(for: model.model) {
+            request = VNCoreMLRequest(model: visionModel/*, completionHandler: visionRequestDidComplete*/)
+            request?.imageCropAndScaleOption = .scaleFill
+        } else {
+            fatalError()
+        }
+        
+        // prepare the input
+        //resize image and convert to CVPixelBuffer
+        var imgRect = CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height)
+        let resizedImage = image.resize(newSize: NSSize(width: 513, height: 513))
+        // to CGImage
+        let cgResizedImage = resizedImage.cgImage(forProposedRect: &imgRect, context: nil, hints: nil)
+        
+        
+        guard let input = try? DeepLabV3Input(imageWith: cgResizedImage!) else {
+            print("fail: input preparation")
             return
         }
         
-        guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
-            print("Failed to create CGImage from input image.")
+        
+        // pass input through model
+        guard let prediction = try? model.prediction(input: input) else {
+            print("fail: predition")
             return
         }
-
-        // Log model information
-        print("Model loaded successfully: \(model)")
+            
+        // output
+        let output = DeepLabV3Output(semanticPredictions: prediction.semanticPredictions)
+        let buffer = output.featureValue(for: "semanticPredictions")?.multiArrayValue?.pixelBuffer
+//        self.segmentedImage = NSImage(pixelBuffer: buffer!)
         
-        // Preprocess the image
-        guard let preprocessedImage = preprocessImage(cgImage: cgImage) else {
-            print("Failed to preprocess image.")
-            return
-        }
-        
-        // Log preprocessed image information
-        print("Preprocessed CIImage: \(preprocessedImage)")
+        print(self.segmentedImage!)
 
-        let handler = VNImageRequestHandler(ciImage: preprocessedImage, options: [:])
-
-        do {
-            let visionModel = try VNCoreMLModel(for: model.model)
-            let request = VNCoreMLRequest(model: visionModel) { request, error in
-                if let error = error {
-                    print("Error during segmentation: \(error.localizedDescription)")
-                    return
-                }
-                
-                guard let results = request.results as? [VNPixelBufferObservation], !results.isEmpty else {
-                    print("No valid results found.")
-                    return
-                }
-                
-                if let pixelBuffer = results.first?.pixelBuffer {
-                    // Verify pixel buffer content
-                    print("Pixel Buffer Width: \(CVPixelBufferGetWidth(pixelBuffer))")
-                    print("Pixel Buffer Height: \(CVPixelBufferGetHeight(pixelBuffer))")
-
-                    if let segmentedImage = self.convert(pixelBuffer: pixelBuffer) {
-                        self.segmentedImage = segmentedImage
-                        print("Segmentation successful, image updated.")
-                    } else {
-                        print("Error in converting image.")
-                    }
-                } else {
-                    print("No pixel buffer found in results.")
-                }
-            }
-            print("Performing request with handler")
-            try handler.perform([request])
-        } catch {
-            print("Failed to perform image segmentation: \(error)")
-        }
     }
     
+    
+
+//    private func segmentImage(image: NSImage) {
+//        // Ensure the model is loaded and the image is available as CGImage
+//        guard let model = try? DeepLabV3(configuration: .init()) else {
+//            print("Failed to load model.")
+//            return
+//        }
+//        
+//        guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+//            print("Failed to create CGImage from input image.")
+//            return
+//        }
+//
+//        // Log model information
+//        print("Model loaded successfully: \(model)")
+//        
+//        // Preprocess the image
+//        guard let preprocessedImage = preprocessImage(cgImage: cgImage) else {
+//            print("Failed to preprocess image.")
+//            return
+//        }
+//        
+//        // Log preprocessed image information
+//        print("Preprocessed CIImage: \(preprocessedImage)")
+//
+//        let handler = VNImageRequestHandler(ciImage: preprocessedImage, options: [:])
+//
+//        do {
+//            let visionModel = try VNCoreMLModel(for: model.model)
+//            let request = VNCoreMLRequest(model: visionModel) { request, error in
+//                if let error = error {
+//                    print("Error during segmentation: \(error.localizedDescription)")
+//                    return
+//                }
+//                
+//                guard let results = request.results as? [VNPixelBufferObservation], !results.isEmpty else {
+//                    print("No valid results found.")
+//                    return
+//                }
+//                
+//                if let pixelBuffer = results.first?.pixelBuffer {
+//                    // Verify pixel buffer content
+//                    print("Pixel Buffer Width: \(CVPixelBufferGetWidth(pixelBuffer))")
+//                    print("Pixel Buffer Height: \(CVPixelBufferGetHeight(pixelBuffer))")
+//
+//                    if let segmentedImage = self.convert(pixelBuffer: pixelBuffer) {
+//                        self.segmentedImage = segmentedImage
+//                        print("Segmentation successful, image updated.")
+//                    } else {
+//                        print("Error in converting image.")
+//                    }
+//                } else {
+//                    print("No pixel buffer found in results.")
+//                }
+//            }
+//            print("Performing request with handler")
+//            try handler.perform([request])
+//        } catch {
+//            print("Failed to perform image segmentation: \(error)")
+//        }
+//    }
+//    
     private func preprocessImage(cgImage: CGImage) -> CIImage? {
         let ciImage = CIImage(cgImage: cgImage)
         let size = CGSize(width: 513, height: 513) // Expected size for DeepLabV3
