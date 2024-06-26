@@ -19,11 +19,11 @@ struct ContentView: View {
                 Image(nsImage: inputImage)
                     .resizable()
                     .scaledToFit()
-                    .frame(maxHeight: 300)
+                    .frame(minHeight: 500)
                     .padding()
             } else {
                 Text("Select an Image")
-                    .frame(maxHeight: 300)
+                    .frame(minHeight: 500)
                     .padding()
             }
 
@@ -36,7 +36,7 @@ struct ContentView: View {
                 Image(nsImage: segmentedImage)
                     .resizable()
                     .scaledToFit()
-                    .frame(maxHeight: 300)
+                    .frame(minHeight: 500)
                     .padding()
             }
 
@@ -64,14 +64,29 @@ struct ContentView: View {
 
     private func segmentImage(image: NSImage) {
         // Ensure the model is loaded and the image is available as CGImage
-        guard let model = try? DeepLabV3(configuration: .init()),
-              let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
-            print("Failed to load model or image.")
+        guard let model = try? DeepLabV3(configuration: .init()) else {
+            print("Failed to load model.")
+            return
+        }
+        
+        guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+            print("Failed to create CGImage from input image.")
             return
         }
 
-        let ciImage = CIImage(cgImage: cgImage)
-        let handler = VNImageRequestHandler(ciImage: ciImage, options: [:])
+        // Log model information
+        print("Model loaded successfully: \(model)")
+        
+        // Preprocess the image
+        guard let preprocessedImage = preprocessImage(cgImage: cgImage) else {
+            print("Failed to preprocess image.")
+            return
+        }
+        
+        // Log preprocessed image information
+        print("Preprocessed CIImage: \(preprocessedImage)")
+
+        let handler = VNImageRequestHandler(ciImage: preprocessedImage, options: [:])
 
         do {
             let visionModel = try VNCoreMLModel(for: model.model)
@@ -101,10 +116,20 @@ struct ContentView: View {
                     print("No pixel buffer found in results.")
                 }
             }
+            print("Performing request with handler")
             try handler.perform([request])
         } catch {
             print("Failed to perform image segmentation: \(error)")
         }
+    }
+    
+    private func preprocessImage(cgImage: CGImage) -> CIImage? {
+        let ciImage = CIImage(cgImage: cgImage)
+        let size = CGSize(width: 513, height: 513) // Expected size for DeepLabV3
+        
+        let resizedCIImage = ciImage.resizeTo(size: size)
+        print("Preprocessed image size: \(resizedCIImage?.extent.size ?? CGSize.zero)")
+        return resizedCIImage
     }
 
     private func convert(pixelBuffer: CVPixelBuffer) -> NSImage? {
@@ -134,6 +159,15 @@ struct ContentView: View {
         return NSImage(cgImage: cgImage, size: NSSize(width: width, height: height))
     }
 }
+
+extension CIImage {
+    func resizeTo(size: CGSize) -> CIImage? {
+        let scaleX = size.width / extent.size.width
+        let scaleY = size.height / extent.size.height
+        return transformed(by: CGAffineTransform(scaleX: scaleX, y: scaleY))
+    }
+}
+
 
 #Preview {
     ContentView()
