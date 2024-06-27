@@ -95,22 +95,47 @@ struct ContentView: View {
             print("fail: predition")
             return
         }
-            
-        // output
-        let output = DeepLabV3Output(semanticPredictions: prediction.semanticPredictions)
-        guard let buffer = output.featureValue(for: "semanticPredictions")?.multiArrayValue?.pixelBuffer else {
-            print("Buffer not computed")
-            return
-        }
-//        self.segmentedImage = NSImage(pixelBuffer: buffer)
         
+        let multiArray = prediction.semanticPredictions
+
+        // Convert MLMultiArray to CVPixelBuffer
+        let pixelFormatType = kCVPixelFormatType_32BGRA
+        let bufferPointer = UnsafeMutableRawPointer(multiArray.dataPointer)
+
+        var pixelBufferOut: CVPixelBuffer?
+        let status = CVPixelBufferCreateWithBytes(
+            kCFAllocatorDefault,
+            Int(multiArray.shape[0].intValue),
+            Int(multiArray.shape[1].intValue),
+            pixelFormatType,
+            bufferPointer,
+            multiArray.strides[0].intValue,
+            nil, // You can provide a release callback here if needed
+            nil,
+            nil,
+            &pixelBufferOut
+        )
+
+        guard status == kCVReturnSuccess, let outputPixelBuffer = pixelBufferOut else {
+            fatalError("Unable to create CVPixelBuffer from MLMultiArray.")
+        }
+        // outputPixelBuffer is the pixel buffer
+        
+//        // output
+//        let output = DeepLabV3Output(semanticPredictions: prediction.semanticPredictions)
+//        guard let buffer = output.featureValue(for: "semanticPredictions")?.multiArrayValue?.pixelBuffer else {
+//            print("Buffer not computed")
+//            return
+//        }
+//        self.segmentedImage = NSImage(pixelBuffer: buffer)
+//        
         let ciContext = CIContext()
-        let ciOutImage = CIImage(cvImageBuffer: buffer)
+        let ciOutImage = CIImage(cvImageBuffer: outputPixelBuffer)
         
         if let cgOutImage = ciContext.createCGImage(ciOutImage, from: ciOutImage.extent){
             let outImage = NSImage(cgImage: cgOutImage, size: NSSize(width: 513, height: 513))
             self.segmentedImage = outImage
-            print(self.segmentedImage!)
+            print("segmentedImage assigned")
         } else {
             print("could not create CGImage")
         }
