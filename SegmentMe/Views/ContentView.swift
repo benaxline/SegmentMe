@@ -14,41 +14,44 @@ struct ContentView: View {
     @State private var segmentedImage: NSImage?
     
     var body: some View {
-        VStack {
-            if let inputImage = inputImage {
-                Image(nsImage: inputImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(minHeight: 500)
-                    .padding()
-            } else {
-                Text("Select an Image")
-                    .frame(minHeight: 500)
-                    .padding()
-            }
-
-            Button("Select Image") {
-                selectImage()
-            }
-            .padding()
-
-            if let segmentedImage = segmentedImage {
-                Image(nsImage: segmentedImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(minHeight: 500)
-                    .padding()
-            }
-
-            Button("Segment Image") {
+        ScrollView {
+            VStack {
                 if let inputImage = inputImage {
-                    segmentImage(image: inputImage)
-                    
+                    Image(nsImage: inputImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 400)
+                        .padding()
+                } else {
+                    Text("Select an Image")
+                        .frame(height: 400)
+                        .padding()
                 }
+                
+                Button("Select Image") {
+                    selectImage()
+                }
+                .padding()
+                
+                if let segmentedImage = segmentedImage {
+                    Image(nsImage: segmentedImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 400)
+                        .padding()
+                }
+                
+                Button("Segment Image") {
+                    if let inputImage = inputImage {
+                        segmentImage(image: inputImage)
+                        
+                    }
+                }
+                .padding()
+                .disabled(inputImage == nil)
             }
-            .padding()
-            .disabled(inputImage == nil)
         }
+        
     }
     
     private func selectImage() {
@@ -65,7 +68,10 @@ struct ContentView: View {
     
     private func segmentImage(image: NSImage) {
         // load model
-        var model = DeepLabV3()   // depreicated
+        guard let model = try? DeepLabV3(configuration: MLModelConfiguration()) else {
+            print("model not created")
+            return
+        }
         var request: VNCoreMLRequest?
         
         // setup model
