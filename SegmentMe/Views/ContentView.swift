@@ -98,10 +98,22 @@ struct ContentView: View {
             
         // output
         let output = DeepLabV3Output(semanticPredictions: prediction.semanticPredictions)
-        let buffer = output.featureValue(for: "semanticPredictions")?.multiArrayValue?.pixelBuffer
-//        self.segmentedImage = NSImage(pixelBuffer: buffer!)
+        guard let buffer = output.featureValue(for: "semanticPredictions")?.multiArrayValue?.pixelBuffer else {
+            print("Buffer not computed")
+            return
+        }
+//        self.segmentedImage = NSImage(pixelBuffer: buffer)
         
-        print(self.segmentedImage!)
+        let ciContext = CIContext()
+        let ciOutImage = CIImage(cvImageBuffer: buffer)
+        
+        if let cgOutImage = ciContext.createCGImage(ciOutImage, from: ciOutImage.extent){
+            let outImage = NSImage(cgImage: cgOutImage, size: NSSize(width: 513, height: 513))
+            self.segmentedImage = outImage
+            print(self.segmentedImage!)
+        } else {
+            print("could not create CGImage")
+        }
 
     }
     
