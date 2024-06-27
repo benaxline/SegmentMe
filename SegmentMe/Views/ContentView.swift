@@ -102,6 +102,7 @@ struct ContentView: View {
             return
         }
         
+        
         let multiArray = prediction.semanticPredictions
 
         // Convert MLMultiArray to CVPixelBuffer
@@ -116,7 +117,7 @@ struct ContentView: View {
             pixelFormatType,
             bufferPointer,
             multiArray.strides[0].intValue,
-            nil, // You can provide a release callback here if needed
+            nil, // release callback here if needed
             nil,
             nil,
             &pixelBufferOut
@@ -128,7 +129,8 @@ struct ContentView: View {
         // outputPixelBuffer is the pixel buffer
         
 //        // output
-//        let output = DeepLabV3Output(semanticPredictions: prediction.semanticPredictions)
+        let output = DeepLabV3Output(semanticPredictions: prediction.semanticPredictions)
+        let buff = output.semanticPredictions.pixelBuffer
 //        guard let buffer = output.featureValue(for: "semanticPredictions")?.multiArrayValue?.pixelBuffer else {
 //            print("Buffer not computed")
 //            return
@@ -136,16 +138,19 @@ struct ContentView: View {
 //        self.segmentedImage = NSImage(pixelBuffer: buffer)
 //        
         let ciContext = CIContext()
-        let ciOutImage = CIImage(cvImageBuffer: outputPixelBuffer)
+        let ciOutImage = CIImage(cvPixelBuffer: outputPixelBuffer)
+//        let ciOutImage = CIImage(cvImageBuffer: buff!)
         
         if let cgOutImage = ciContext.createCGImage(ciOutImage, from: ciOutImage.extent){
             let outImage = NSImage(cgImage: cgOutImage, size: NSSize(width: 513, height: 513))
             self.segmentedImage = outImage
             print("segmentedImage assigned")
+                
+//            return outImage
         } else {
             print("could not create CGImage")
         }
-
+//        print("no image")
     }
     
     

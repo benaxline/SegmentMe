@@ -25,7 +25,6 @@
 		B5425B562C2B0C9A00B9FA30 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5425B552C2B0C9A00B9FA30 /* AppDelegate.swift */; };
 		B5425B5B2C2B4A0300B9FA30 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5425B5A2C2B4A0300B9FA30 /* ImagePicker.swift */; };
 		B5425B5D2C2B4A3700B9FA30 /* NSImage+PixelBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5425B5C2C2B4A3700B9FA30 /* NSImage+PixelBuffer.swift */; };
-		B5425B9B2C2CA7D900B9FA30 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5425B9A2C2CA7D900B9FA30 /* ViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,7 +67,6 @@
 		B5425B552C2B0C9A00B9FA30 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B5425B5A2C2B4A0300B9FA30 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		B5425B5C2C2B4A3700B9FA30 /* NSImage+PixelBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSImage+PixelBuffer.swift"; sourceTree = "<group>"; };
-		B5425B9A2C2CA7D900B9FA30 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,7 +162,6 @@
 			isa = PBXGroup;
 			children = (
 				B5425B082C24A7F400B9FA30 /* ContentView.swift */,
-				B5425B9A2C2CA7D900B9FA30 /* ViewController.swift */,
 				B5425B5A2C2B4A0300B9FA30 /* ImagePicker.swift */,
 				B5425B5C2C2B4A3700B9FA30 /* NSImage+PixelBuffer.swift */,
 				B5425B472C2603D200B9FA30 /* ImportingView.swift */,
@@ -307,7 +304,6 @@
 				B5425B5D2C2B4A3700B9FA30 /* NSImage+PixelBuffer.swift in Sources */,
 				B5425B502C29D44F00B9FA30 /* DeepLabV3.mlpackage in Sources */,
 				B5425B4A2C260B1000B9FA30 /* SideImageView.swift in Sources */,
-				B5425B9B2C2CA7D900B9FA30 /* ViewController.swift in Sources */,
 				B5425B092C24A7F400B9FA30 /* ContentView.swift in Sources */,
 				B5425B522C29EFA400B9FA30 /* NSImageExtensions.swift in Sources */,
 				B5425B072C24A7F400B9FA30 /* SegmentMeApp.swift in Sources */,
