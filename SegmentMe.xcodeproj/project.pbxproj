@@ -25,6 +25,12 @@
 		B5425B562C2B0C9A00B9FA30 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5425B552C2B0C9A00B9FA30 /* AppDelegate.swift */; };
 		B5425B5B2C2B4A0300B9FA30 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5425B5A2C2B4A0300B9FA30 /* ImagePicker.swift */; };
 		B5425B5D2C2B4A3700B9FA30 /* NSImage+PixelBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5425B5C2C2B4A3700B9FA30 /* NSImage+PixelBuffer.swift */; };
+		B57BABEE2C2F0B5100C1AA60 /* segImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57BABED2C2F0B5100C1AA60 /* segImage.swift */; };
+		B57BABF02C2F0D8700C1AA60 /* DeepLabV3FP16.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = B57BABEF2C2F0D8700C1AA60 /* DeepLabV3FP16.mlmodel */; };
+		B57BABF22C2F0D8D00C1AA60 /* DeepLabV3Int8LUT.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = B57BABF12C2F0D8D00C1AA60 /* DeepLabV3Int8LUT.mlmodel */; };
+		B57BABF42C2F270900C1AA60 /* MLMultiArray+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57BABF32C2F270900C1AA60 /* MLMultiArray+Image.swift */; };
+		B57BABF62C2F275800C1AA60 /* CGImage+RawBytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57BABF52C2F275800C1AA60 /* CGImage+RawBytes.swift */; };
+		B57BABF82C2F27C100C1AA60 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57BABF72C2F27C100C1AA60 /* Math.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +73,12 @@
 		B5425B552C2B0C9A00B9FA30 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B5425B5A2C2B4A0300B9FA30 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		B5425B5C2C2B4A3700B9FA30 /* NSImage+PixelBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSImage+PixelBuffer.swift"; sourceTree = "<group>"; };
+		B57BABED2C2F0B5100C1AA60 /* segImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = segImage.swift; sourceTree = "<group>"; };
+		B57BABEF2C2F0D8700C1AA60 /* DeepLabV3FP16.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = DeepLabV3FP16.mlmodel; sourceTree = "<group>"; };
+		B57BABF12C2F0D8D00C1AA60 /* DeepLabV3Int8LUT.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = DeepLabV3Int8LUT.mlmodel; sourceTree = "<group>"; };
+		B57BABF32C2F270900C1AA60 /* MLMultiArray+Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MLMultiArray+Image.swift"; sourceTree = "<group>"; };
+		B57BABF52C2F275800C1AA60 /* CGImage+RawBytes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGImage+RawBytes.swift"; sourceTree = "<group>"; };
+		B57BABF72C2F27C100C1AA60 /* Math.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,12 +130,17 @@
 			isa = PBXGroup;
 			children = (
 				B5425B062C24A7F400B9FA30 /* SegmentMeApp.swift */,
+				B57BABEF2C2F0D8700C1AA60 /* DeepLabV3FP16.mlmodel */,
+				B57BABF12C2F0D8D00C1AA60 /* DeepLabV3Int8LUT.mlmodel */,
 				B5425B4F2C29D44E00B9FA30 /* DeepLabV3.mlpackage */,
 				B5425B592C2B168B00B9FA30 /* Views */,
 				B5425B512C29EFA400B9FA30 /* NSImageExtensions.swift */,
+				B57BABF32C2F270900C1AA60 /* MLMultiArray+Image.swift */,
 				B5425B552C2B0C9A00B9FA30 /* AppDelegate.swift */,
 				B5425B412C25FE4200B9FA30 /* photosModel.swift */,
 				B5425B432C25FF3600B9FA30 /* imageData.swift */,
+				B57BABF52C2F275800C1AA60 /* CGImage+RawBytes.swift */,
+				B57BABF72C2F27C100C1AA60 /* Math.swift */,
 				B5425B452C26004A00B9FA30 /* ImageRow.swift */,
 				B5425B3F2C25FDC900B9FA30 /* choosePhoto.swift */,
 				B5425B0A2C24A7F700B9FA30 /* Assets.xcassets */,
@@ -162,6 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				B5425B082C24A7F400B9FA30 /* ContentView.swift */,
+				B57BABED2C2F0B5100C1AA60 /* segImage.swift */,
 				B5425B5A2C2B4A0300B9FA30 /* ImagePicker.swift */,
 				B5425B5C2C2B4A3700B9FA30 /* NSImage+PixelBuffer.swift */,
 				B5425B472C2603D200B9FA30 /* ImportingView.swift */,
@@ -304,15 +322,21 @@
 				B5425B5D2C2B4A3700B9FA30 /* NSImage+PixelBuffer.swift in Sources */,
 				B5425B502C29D44F00B9FA30 /* DeepLabV3.mlpackage in Sources */,
 				B5425B4A2C260B1000B9FA30 /* SideImageView.swift in Sources */,
+				B57BABF22C2F0D8D00C1AA60 /* DeepLabV3Int8LUT.mlmodel in Sources */,
 				B5425B092C24A7F400B9FA30 /* ContentView.swift in Sources */,
 				B5425B522C29EFA400B9FA30 /* NSImageExtensions.swift in Sources */,
 				B5425B072C24A7F400B9FA30 /* SegmentMeApp.swift in Sources */,
+				B57BABF42C2F270900C1AA60 /* MLMultiArray+Image.swift in Sources */,
 				B5425B562C2B0C9A00B9FA30 /* AppDelegate.swift in Sources */,
 				B5425B462C26004A00B9FA30 /* ImageRow.swift in Sources */,
+				B57BABF02C2F0D8700C1AA60 /* DeepLabV3FP16.mlmodel in Sources */,
 				B5425B442C25FF3600B9FA30 /* imageData.swift in Sources */,
 				B5425B5B2C2B4A0300B9FA30 /* ImagePicker.swift in Sources */,
+				B57BABF82C2F27C100C1AA60 /* Math.swift in Sources */,
+				B57BABF62C2F275800C1AA60 /* CGImage+RawBytes.swift in Sources */,
 				B5425B422C25FE4200B9FA30 /* photosModel.swift in Sources */,
 				B5425B402C25FDC900B9FA30 /* choosePhoto.swift in Sources */,
+				B57BABEE2C2F0B5100C1AA60 /* segImage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

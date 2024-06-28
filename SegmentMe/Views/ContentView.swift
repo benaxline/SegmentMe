@@ -10,14 +10,19 @@ import Vision
 import CoreML
 
 struct ContentView: View {
-    @State private var inputImage: NSImage?
-    @State private var segmentedImage: NSImage?
+    @State private var inputImage: CGImage?
+    @State private var segmentedImage: CGImage?
     
     var body: some View {
         ScrollView {
             VStack {
                 if let inputImage = inputImage {
-                    Image(nsImage: inputImage)
+//                    Image(nsImage: inputImage)
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(height: 400)
+//                        .padding()
+                    Image(inputImage, scale: 1, label: Text("Input Image"))
                         .resizable()
                         .scaledToFit()
                         .frame(height: 400)
@@ -34,7 +39,12 @@ struct ContentView: View {
                 .padding()
                 
                 if let segmentedImage = segmentedImage {
-                    Image(nsImage: segmentedImage)
+//                    Image(nsImage: segmentedImage)
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(height: 400)
+//                        .padding()
+                    Image(segmentedImage, scale: 1, label: Text("Segmented Image"))
                         .resizable()
                         .scaledToFit()
                         .frame(height: 400)
@@ -61,12 +71,35 @@ struct ContentView: View {
         
         panel.begin { response in
             if response == .OK, let url = panel.url, let image = NSImage(contentsOf: url) {
-                self.inputImage = image
+                var rect = CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height)
+                self.inputImage = image.cgImage(forProposedRect: &rect, context: nil, hints: nil)
             }
         }
     }
     
-    private func segmentImage(image: NSImage) {
+//    private func seg2Image(image: NSImage) {
+//        // set up model
+//        let config = MLModelConfiguration()
+//        let model = try? DeepLabV3(configuration: config)
+//        
+//        guard let deeplab = model else {
+//            fatalError("could not initialize model")
+//        }
+//        
+//        let deepLabModel = deeplab.model
+//        
+//        guard let deeplabVisionModel = try? VNCoreMLModel(for: deepLabModel) else {
+//            fatalError("could not create vision model")
+//        }
+//        
+//        // create request
+//        let deeplabRequest = VNCoreMLRequest(model: deeplabVisionModel, completionHandler: visionRequestHandler)
+//        
+//    }
+//    
+    
+    
+    private func segmentImage(image: CGImage) {
         // load model
         guard let model = try? DeepLabV3(configuration: MLModelConfiguration()) else {
             print("model not created")
@@ -84,13 +117,13 @@ struct ContentView: View {
         
         // prepare the input
         //resize image and convert to CVPixelBuffer
-        var imgRect = CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height)
-        let resizedImage = image.resize(newSize: NSSize(width: 513, height: 513))
-        // to CGImage
-        let cgResizedImage = resizedImage.cgImage(forProposedRect: &imgRect, context: nil, hints: nil)
+//        var imgRect = CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height)
+//        let resizedImage = image.resize(newSize: NSSize(width: 513, height: 513))
+//        // to CGImage
+//        let cgResizedImage = resizedImage.cgImage(forProposedRect: &imgRect, context: nil, hints: nil)
         
         
-        guard let input = try? DeepLabV3Input(imageWith: cgResizedImage!) else {
+        guard let input = try? DeepLabV3Input(imageWith: image) else {
             print("fail: input preparation")
             return
         }
@@ -106,51 +139,53 @@ struct ContentView: View {
         let multiArray = prediction.semanticPredictions
 
         // Convert MLMultiArray to CVPixelBuffer
-        let pixelFormatType = kCVPixelFormatType_32BGRA
-        let bufferPointer = UnsafeMutableRawPointer(multiArray.dataPointer)
-
-        var pixelBufferOut: CVPixelBuffer?
-        let status = CVPixelBufferCreateWithBytes(
-            kCFAllocatorDefault,
-            Int(multiArray.shape[0].intValue),
-            Int(multiArray.shape[1].intValue),
-            pixelFormatType,
-            bufferPointer,
-            multiArray.strides[0].intValue,
-            nil, // release callback here if needed
-            nil,
-            nil,
-            &pixelBufferOut
-        )
-
-        guard status == kCVReturnSuccess, let outputPixelBuffer = pixelBufferOut else {
-            fatalError("Unable to create CVPixelBuffer from MLMultiArray.")
-        }
-        // outputPixelBuffer is the pixel buffer
+//        let pixelFormatType = kCVPixelFormatType_32BGRA
+//        let bufferPointer = UnsafeMutableRawPointer(multiArray.dataPointer)
+//
+//        var pixelBufferOut: CVPixelBuffer?
+//        let status = CVPixelBufferCreateWithBytes(
+//            kCFAllocatorDefault,
+//            Int(multiArray.shape[0].intValue),
+//            Int(multiArray.shape[1].intValue),
+//            pixelFormatType,
+//            bufferPointer,
+//            multiArray.strides[0].intValue,
+//            nil, // release callback here if needed
+//            nil,
+//            nil,
+//            &pixelBufferOut
+//        )
+//
+//        guard status == kCVReturnSuccess, let outputPixelBuffer = pixelBufferOut else {
+//            fatalError("Unable to create CVPixelBuffer from MLMultiArray.")
+//        }
+//        // outputPixelBuffer is the pixel buffer
         
 //        // output
-        let output = DeepLabV3Output(semanticPredictions: prediction.semanticPredictions)
+        let output = DeepLabV3Output(semanticPredictions: multiArray)
         let buff = output.semanticPredictions.pixelBuffer
+        
+        self.segmentedImage = multiArray.cgImage()
 //        guard let buffer = output.featureValue(for: "semanticPredictions")?.multiArrayValue?.pixelBuffer else {
 //            print("Buffer not computed")
 //            return
 //        }
 //        self.segmentedImage = NSImage(pixelBuffer: buffer)
 //        
-        let ciContext = CIContext()
-        let ciOutImage = CIImage(cvPixelBuffer: outputPixelBuffer)
-//        let ciOutImage = CIImage(cvImageBuffer: buff!)
-        
-        if let cgOutImage = ciContext.createCGImage(ciOutImage, from: ciOutImage.extent){
-            let outImage = NSImage(cgImage: cgOutImage, size: NSSize(width: 513, height: 513))
-            self.segmentedImage = outImage
-            print("segmentedImage assigned")
-                
-//            return outImage
-        } else {
-            print("could not create CGImage")
-        }
-//        print("no image")
+//        let ciContext = CIContext()
+//        let ciOutImage = CIImage(cvPixelBuffer: outputPixelBuffer)
+////        let ciOutImage = CIImage(cvImageBuffer: buff!)
+//        
+//        if let cgOutImage = ciContext.createCGImage(ciOutImage, from: ciOutImage.extent){
+//            let outImage = NSImage(cgImage: cgOutImage, size: NSSize(width: 513, height: 513))
+//            self.segmentedImage = cgOutImage //outImage
+//            print("segmentedImage assigned")
+//                
+////            return outImage
+//        } else {
+//            print("could not create CGImage")
+//        }
+////        print("no image")
     }
     
     
