@@ -14,7 +14,7 @@ struct ContentView: View {
     @State private var segmentedImage: CGImage?
     
     var body: some View {
-        ScrollView {
+//        ScrollView {
             VStack {
                 HStack {
                     if let inputImage = inputImage {
@@ -39,22 +39,29 @@ struct ContentView: View {
                 }
                 
                 HStack {
-                    Button("Select Image") {
+                    Spacer()
+                    
+                    Button(action: {
                         selectImage()
-                    }
+                    }, label: {
+                        Text("Select Image")
+                    })
                     .padding()
+                    .controlSize(.extraLarge)
                     
                     
-                    
-                    Button("Segment Image") {
-                        if let inputImage = inputImage {
+                    Button(action: {
+                        if let inputImage = inputImage{
                             segmentImage(image: inputImage)
-                            
                         }
-                    }
+                    }, label: {
+                        Text("Segment Image")
+                    })
                     .padding()
+                    .controlSize(.extraLarge)
                     .disabled(inputImage == nil)
-                }
+                    
+                    Spacer()
             }
         }
         
