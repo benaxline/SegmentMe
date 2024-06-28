@@ -106,8 +106,8 @@ struct ContentView: View {
         let multiArray = prediction.semanticPredictions
 //        let output = DeepLabV3Output(semanticPredictions: multiArray)
 //        let buff = output.semanticPredictions.pixelBuffer
-        
-        self.segmentedImage = multiArray.cgImage()
+//        let temp = multiArray.cgImage(channel: 3)
+        self.segmentedImage = multiArray.cgImage(min: 0, max: 20, channel: 3)
     }
     private func preprocessImage(cgImage: CGImage) -> CIImage? {
         let ciImage = CIImage(cgImage: cgImage)
