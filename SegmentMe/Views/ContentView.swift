@@ -17,24 +17,26 @@ struct ContentView: View {
 //        ScrollView {
             VStack {
                 HStack {
-                    if let inputImage = inputImage {
-                        Image(inputImage, scale: 1, label: Text("Input Image"))
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 400)
-                            .padding()
-                    } else {
-                        Text("Select an Image")
-                            .frame(height: 400)
-                            .padding()
-                    }
-                    
-                    if let segmentedImage = segmentedImage {
-                        Image(segmentedImage, scale: 1, label: Text("Segmented Image"))
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 400)
-                            .padding()
+                    ZStack {
+                        if let inputImage = inputImage {
+                            Image(inputImage, scale: 1, label: Text("Input Image"))
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 400)
+                                .padding()
+                        } else {
+                            Text("Select an Image")
+                                .frame(height: 400)
+                                .padding()
+                        }
+                        
+                        if let segmentedImage = segmentedImage {
+                            Image(segmentedImage, scale: 1, label: Text("Segmented Image"))
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 400)
+                                .padding()
+                        }
                     }
                 }
                 
@@ -42,6 +44,8 @@ struct ContentView: View {
                     Spacer()
                     
                     Button(action: {
+                        inputImage = nil
+                        segmentedImage = nil
                         selectImage()
                     }, label: {
                         Text("Select Image")
@@ -70,7 +74,7 @@ struct ContentView: View {
     private func selectImage() {
         let panel = NSOpenPanel()
         panel.canChooseFiles = true
-        panel.allowedContentTypes = [.png, .jpeg]
+        panel.allowedContentTypes = [.png, .jpeg, .heic]
         
         panel.begin { response in
             if response == .OK, let url = panel.url, let image = NSImage(contentsOf: url) {
@@ -92,7 +96,7 @@ struct ContentView: View {
         // setup model
         if let visionModel = try? VNCoreMLModel(for: model.model) {
             request = VNCoreMLRequest(model: visionModel/*, completionHandler: visionRequestDidComplete*/)
-            request?.imageCropAndScaleOption = .scaleFill
+            request?.imageCropAndScaleOption = .scaleFit
         } else {
             fatalError()
         }
@@ -114,8 +118,37 @@ struct ContentView: View {
 //        let output = DeepLabV3Output(semanticPredictions: multiArray)
 //        let buff = output.semanticPredictions.pixelBuffer
 //        let temp = multiArray.cgImage(channel: 3)
-        self.segmentedImage = multiArray.cgImage(min: 0, max: 20, channel: 3)
+        let segImage = multiArray.cgImage(min: 0, max: 20, channel: 3)
+        
+        let overlayImage = overlayImages(image: image, segmentation: segImage!, alpha: 0.3)
+        self.segmentedImage = overlayImage
     }
+    
+    // function to overlay segmentation and original image
+    private func overlayImages(image: CGImage, segmentation: CGImage, alpha: CGFloat) -> CGImage? {
+        let width = image.width
+        let height = image.height
+        
+        guard let context = CGContext(data: nil,
+                                      width: width,
+                                      height: height,
+                                      bitsPerComponent: image.bitsPerComponent,
+                                      bytesPerRow: 0,
+                                      space: image.colorSpace ?? CGColorSpace(name: CGColorSpace.sRGB)!,
+                                      bitmapInfo: image.bitmapInfo.rawValue) else {
+            return nil
+        }
+        
+        context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+        
+        context.setAlpha(alpha)
+        
+        context.draw(segmentation, in: CGRect(x: 0, y: 0, width: width, height: height))
+        
+        let overlay = context.makeImage()
+        return overlay
+    }
+    
     private func preprocessImage(cgImage: CGImage) -> CIImage? {
         let ciImage = CIImage(cgImage: cgImage)
         let size = CGSize(width: 513, height: 513) // Expected size for DeepLabV3
@@ -160,7 +193,6 @@ extension CIImage {
         return transformed(by: CGAffineTransform(scaleX: scaleX, y: scaleY))
     }
 }
-
 
 #Preview {
     ContentView()
