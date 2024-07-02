@@ -39,6 +39,7 @@ struct ContentView: View {
                                 .gesture(TapGesture().onEnded({
                                     print("event detected")
                                     clickLocation = hoverLocation
+                                    segmentImage(image: inputImage)
                                 }))
                         } else {
                             Text("Select an Image")
@@ -76,16 +77,16 @@ struct ContentView: View {
                     .controlSize(.extraLarge)
                     
                     
-                    Button(action: {
-                        if let inputImage = inputImage{
-                            segmentImage(image: inputImage)
-                        }
-                    }, label: {
-                        Text("Segment Image")
-                    })
-                    .padding()
-                    .controlSize(.extraLarge)
-                    .disabled(inputImage == nil)
+//                    Button(action: {
+//                        if let inputImage = inputImage{
+//                            segmentImage(image: inputImage)
+//                        }
+//                    }, label: {
+//                        Text("Segment Image")
+//                    })
+//                    .padding()
+//                    .controlSize(.extraLarge)
+//                    .disabled(inputImage == nil)
                     
                     Spacer()
             }
