@@ -12,6 +12,9 @@ import CoreML
 struct ContentView: View {
     @State private var inputImage: CGImage?
     @State private var segmentedImage: CGImage?
+    @State private var isHovering = false
+    @State private var hoverLocation: CGPoint = .zero
+    @State private var clickLocation: CGPoint = .zero
     
     var body: some View {
 //        ScrollView {
@@ -24,6 +27,19 @@ struct ContentView: View {
                                 .scaledToFit()
                                 .frame(height: 400)
                                 .padding()
+                                .onContinuousHover(perform: { phase in
+                                    switch phase {
+                                    case .active (let location):
+                                        hoverLocation = location
+                                        isHovering = true
+                                    case .ended:
+                                        isHovering = false
+                                    }
+                                })
+                                .gesture(TapGesture().onEnded({
+                                    print("event detected")
+                                    clickLocation = hoverLocation
+                                }))
                         } else {
                             Text("Select an Image")
                                 .frame(height: 400)
@@ -37,8 +53,13 @@ struct ContentView: View {
                                 .frame(height: 400)
                                 .padding()
                                 
+                                
                         }
                     }
+                }
+                if isHovering {
+                    Text("Hover Location: \(hoverLocation)")
+                    Text("Click Location: \(clickLocation)")
                 }
                 
                 HStack {

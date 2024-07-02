@@ -12,6 +12,7 @@ struct SegmentMeApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+//            testView()
         }
     }
 }
