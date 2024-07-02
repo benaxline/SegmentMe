@@ -31,6 +31,7 @@
 		B57BABF42C2F270900C1AA60 /* MLMultiArray+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57BABF32C2F270900C1AA60 /* MLMultiArray+Image.swift */; };
 		B57BABF62C2F275800C1AA60 /* CGImage+RawBytes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57BABF52C2F275800C1AA60 /* CGImage+RawBytes.swift */; };
 		B57BABF82C2F27C100C1AA60 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = B57BABF72C2F27C100C1AA60 /* Math.swift */; };
+		B5F5C84A2C344E03003B181F /* ContentView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5F5C8492C344E03003B181F /* ContentView2.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +80,7 @@
 		B57BABF32C2F270900C1AA60 /* MLMultiArray+Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MLMultiArray+Image.swift"; sourceTree = "<group>"; };
 		B57BABF52C2F275800C1AA60 /* CGImage+RawBytes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGImage+RawBytes.swift"; sourceTree = "<group>"; };
 		B57BABF72C2F27C100C1AA60 /* Math.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
+		B5F5C8492C344E03003B181F /* ContentView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView2.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +181,7 @@
 			isa = PBXGroup;
 			children = (
 				B5425B082C24A7F400B9FA30 /* ContentView.swift */,
+				B5F5C8492C344E03003B181F /* ContentView2.swift */,
 				B57BABED2C2F0B5100C1AA60 /* segImage.swift */,
 				B5425B5A2C2B4A0300B9FA30 /* ImagePicker.swift */,
 				B5425B5C2C2B4A3700B9FA30 /* NSImage+PixelBuffer.swift */,
@@ -331,6 +334,7 @@
 				B5425B462C26004A00B9FA30 /* ImageRow.swift in Sources */,
 				B57BABF02C2F0D8700C1AA60 /* DeepLabV3FP16.mlmodel in Sources */,
 				B5425B442C25FF3600B9FA30 /* imageData.swift in Sources */,
+				B5F5C84A2C344E03003B181F /* ContentView2.swift in Sources */,
 				B5425B5B2C2B4A0300B9FA30 /* ImagePicker.swift in Sources */,
 				B57BABF82C2F27C100C1AA60 /* Math.swift in Sources */,
 				B57BABF62C2F275800C1AA60 /* CGImage+RawBytes.swift in Sources */,

@@ -36,6 +36,7 @@ struct ContentView: View {
                                 .scaledToFit()
                                 .frame(height: 400)
                                 .padding()
+                                
                         }
                     }
                 }
@@ -70,6 +71,8 @@ struct ContentView: View {
         }
         
     }
+    
+    
     
     private func selectImage() {
         let panel = NSOpenPanel()
@@ -120,7 +123,7 @@ struct ContentView: View {
 //        let temp = multiArray.cgImage(channel: 3)
         let segImage = multiArray.cgImage(min: 0, max: 20, channel: 3)
         
-        let overlayImage = overlayImages(image: image, segmentation: segImage!, alpha: 0.3)
+        let overlayImage = overlayImages(image: image, segmentation: segImage!, alpha: 0.5)
         self.segmentedImage = overlayImage
     }
     
