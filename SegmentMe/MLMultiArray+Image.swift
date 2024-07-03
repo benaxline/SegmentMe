@@ -81,10 +81,13 @@ extension MLMultiArray {
                       axes: (Int, Int, Int)? = nil) -> CGImage? {
     switch self.dataType {
     case .double:
+//        print("double")
       return _image(min: min, max: max, channel: channel, axes: axes)
     case .float32:
+//        print("float32")
       return _image(min: Float(min), max: Float(max), channel: channel, axes: axes)
     case .int32:
+//        print("int32")
       return _image(min: Int32(min), max: Int32(max), channel: channel, axes: axes)
     @unknown default:
       fatalError("Unsupported data type \(dataType.rawValue)")
@@ -216,6 +219,7 @@ extension MLMultiArray {
     for c in 0..<channels {
       for y in 0..<height {
         for x in 0..<width {
+            
           let value = ptr[c*cStride + y*yStride + x*xStride]
           let scaled = (value - min) * T(255) / (max - min)
           let pixel = clamp(scaled, min: T(0), max: T(255)).toUInt8

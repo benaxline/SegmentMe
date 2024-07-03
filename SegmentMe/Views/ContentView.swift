@@ -12,6 +12,7 @@ import CoreML
 struct ContentView: View {
     @State private var inputImage: CGImage?
     @State private var segmentedImage: CGImage?
+    @State private var wantedSegmentation: CGImage?
     @State private var isHovering = false
     @State private var hoverLocation: CGPoint = .zero
     @State private var clickLocation: CGPoint = .zero
@@ -40,6 +41,8 @@ struct ContentView: View {
                                     print("event detected")
                                     clickLocation = hoverLocation
                                     segmentImage(image: inputImage)
+//                                    getNearestMaskVal(maskSegmentation: self.segmentedImage)
+                                    
                                 }))
                         } else {
                             Text("Select an Image")
@@ -53,8 +56,6 @@ struct ContentView: View {
                                 .scaledToFit()
                                 .frame(height: 400)
                                 .padding()
-                                
-                                
                         }
                     }
                 }
@@ -94,7 +95,60 @@ struct ContentView: View {
         
     }
     
-    
+    private func getNearestMaskVal(maskSegmentation: MLMultiArray) {
+        // rounded coordinates
+        let x = self.clickLocation.x.rounded()
+        let y = self.clickLocation.y.rounded()
+        
+        let most = 20
+        let least = 0
+        
+        // get click value
+//        print(maskSegmentation.dataType == .double)
+        let yStride = maskSegmentation.strides[0].intValue
+        let xStride = maskSegmentation.strides[1].intValue
+//        print("xStride: \(xStride), yStride: \(yStride)")
+        let width = maskSegmentation.shape[0].intValue
+        let height = maskSegmentation.shape[1].intValue
+
+        let ptr = UnsafeMutablePointer<Int32>(OpaquePointer(maskSegmentation.dataPointer))
+        
+        
+        let wantedValue = ptr[Int(x) * xStride + Int(y) * yStride]
+        print(wantedValue)
+        
+        
+        var pixels = [UInt8](repeating: 0, count: (width * height) )
+        
+//        let scaled = (value - most) * T(255) / (most - least)
+        for i in 0..<width {
+            for j in 0..<height {
+                let value = ptr[Int(i) * xStride + Int(j) * yStride]
+//                print(value)
+                if value == wantedValue {
+                    // save it
+                    let scaled = (Int(value) - least) * 255 / (most - least)
+                    let pixel = clamp(scaled, min: 0, max: 255)
+                    pixels[j*width + i] = UInt8(pixel) // might not be right: row * stride * j + i
+                }
+                else {
+                    
+                    pixels[j*width + i] = .zero
+                }
+            }
+        }
+        
+        self.wantedSegmentation = CGImage.fromByteArrayGray(pixels, width: width, height: height)
+        
+//
+//        let value = ptr[y*yStride + x*xStride]
+//        let scaled = (value - min) * T(255) / (max - min)
+//        let pixel = clamp(scaled, min: T(0), max: T(255)).toUInt8
+                    
+                
+            
+        
+    }
     
     private func selectImage() {
         let panel = NSOpenPanel()
@@ -145,7 +199,11 @@ struct ContentView: View {
 //        let temp = multiArray.cgImage(channel: 3)
         let segImage = multiArray.cgImage(min: 0, max: 20, channel: 3)
         
-        let overlayImage = overlayImages(image: image, segmentation: segImage!, alpha: 0.5)
+//        let overlayImage = overlayImages(image: image, segmentation: segImage!, alpha: 0.5)
+//        self.segmentedImage = overlayImage
+        getNearestMaskVal(maskSegmentation: multiArray)
+        
+        let overlayImage = overlayImages(image: image, segmentation: self.wantedSegmentation!, alpha: 0.5)
         self.segmentedImage = overlayImage
     }
     
