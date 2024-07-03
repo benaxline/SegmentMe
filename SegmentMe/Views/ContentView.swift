@@ -26,7 +26,7 @@ struct ContentView: View {
                             Image(inputImage, scale: 1, label: Text("Input Image"))
                                 .resizable()
                                 .scaledToFit()
-                                .frame(height: 400)
+                                .frame(maxHeight: 400)
                                 .padding()
                                 .onContinuousHover(perform: { phase in
                                     switch phase {
@@ -44,9 +44,10 @@ struct ContentView: View {
 //                                    getNearestMaskVal(maskSegmentation: self.segmentedImage)
                                     
                                 }))
+                                
                         } else {
                             Text("Select an Image")
-                                .frame(height: 400)
+                                .frame(maxHeight: 400)
                                 .padding()
                         }
                         
@@ -54,15 +55,20 @@ struct ContentView: View {
                             Image(segmentedImage, scale: 1, label: Text("Segmented Image"))
                                 .resizable()
                                 .scaledToFit()
-                                .frame(height: 400)
+                                .frame(maxHeight: 400)
                                 .padding()
+                                .overlay {
+                                    Circle()
+                                        .fill(.green)
+                                        .frame(width: 8, height: 8)
+                                        .position(x: clickLocation.x, y: clickLocation.y)
+                                }
                         }
                     }
                 }
-                if isHovering {
-                    Text("Hover Location: \(hoverLocation)")
-                    Text("Click Location: \(clickLocation)")
-                }
+               
+                Text("Hover Location: \(hoverLocation)")
+                Text("Click Location: \(clickLocation)")
                 
                 HStack {
                     Spacer()
@@ -71,6 +77,7 @@ struct ContentView: View {
                         inputImage = nil
                         segmentedImage = nil
                         selectImage()
+                        
                     }, label: {
                         Text("Select Image")
                     })
@@ -95,10 +102,27 @@ struct ContentView: View {
         
     }
     
-    private func getNearestMaskVal(maskSegmentation: MLMultiArray) {
+    private func getNearestMask(maskSegmentation: MLMultiArray, imageWidth: Int, imageHeight: Int) {
+        print("Original Image: \(imageWidth), \(imageHeight)")
+        
         // rounded coordinates
-        let x = self.clickLocation.x.rounded()
-        let y = self.clickLocation.y.rounded()
+        var x = self.clickLocation.x.rounded()
+        var y = self.clickLocation.y.rounded()
+        print("Clicked Location: (\(x), \(y))")
+        
+        // scale coordinates
+        let wScale = (Float(imageWidth) / Float(imageHeight)) * 400
+        
+        x = CGFloat(Float(x) / Float(400))          // displayed height is 400
+        y = CGFloat(Float(y) / Float(wScale))       // displayed width is
+        print("Normalized Location: (\(x), \(y))")
+        
+        x = CGFloat(Float(x) * 513)
+        y = CGFloat(Float(y) * 513)
+        print("Scaled Location: (\(x), \(y))")
+        
+        x = x.rounded()
+        y = y.rounded()
         
         let most = 20
         let least = 0
@@ -118,7 +142,7 @@ struct ContentView: View {
         print(wantedValue)
         
         
-        var pixels = [UInt8](repeating: 0, count: (width * height) )
+        var pixels = [UInt8](repeating: 255, count: (width * height) )
         
 //        let scaled = (value - most) * T(255) / (most - least)
         for i in 0..<width {
@@ -201,7 +225,7 @@ struct ContentView: View {
         
 //        let overlayImage = overlayImages(image: image, segmentation: segImage!, alpha: 0.5)
 //        self.segmentedImage = overlayImage
-        getNearestMaskVal(maskSegmentation: multiArray)
+        getNearestMask(maskSegmentation: multiArray, imageWidth: image.width, imageHeight: image.height)
         
         let overlayImage = overlayImages(image: image, segmentation: self.wantedSegmentation!, alpha: 0.5)
         self.segmentedImage = overlayImage
