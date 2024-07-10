@@ -1,0 +1,62 @@
+@@ -27,7 +27,7 @@
+                                 .resizable()
+                                 .scaledToFit()
+                                 .frame(maxHeight: 400)
+-                                .padding()
++                                .padding(0)
+                                 .onContinuousHover(perform: { phase in
+                                     switch phase {
+                                     case .active (let location):
+@@ -106,24 +106,24 @@
+         print("Original Image: \(imageWidth), \(imageHeight)")
+         
+         // rounded coordinates
+-        var x = self.clickLocation.x.rounded()
+-        var y = self.clickLocation.y.rounded()
++        let x = self.clickLocation.x.rounded()
++        let y = self.clickLocation.y.rounded()
+         print("Clicked Location: (\(x), \(y))")
++
++        // Compute the expected width of the image given that we constrain the height to be 400
++        let display_width = 400.0 * Double(imageWidth) / Double( imageHeight )
+         
+-        // scale coordinates
+-        let wScale = (Float(imageWidth) / Float(imageHeight)) * 400
+-        
+-        x = CGFloat(Float(x) / Float(400))          // displayed height is 400
+-        y = CGFloat(Float(y) / Float(wScale))       // displayed width is
+-        print("Normalized Location: (\(x), \(y))")
+-        
+-        x = CGFloat(Float(x) * 513)
+-        y = CGFloat(Float(y) * 513)
+-        print("Scaled Location: (\(x), \(y))")
+-        
+-        x = x.rounded()
+-        y = y.rounded()
++        // Compute the normalized location of the click, where the top-left is (0,0), and bottom right is (1,1)
++        let norm_x = x / display_width
++        let norm_y = y / 400.0
++
++        // scale coordinates up to the image coordinates
++        print("Normalized Location: (\(norm_x), \(norm_y))")
+         
++        let model_x = CGFloat(norm_x * 513.0)
++        let model_y = CGFloat(norm_y * 513.0)
++        print("Scaled Location: (\(model_x), \(model_y))")
++                
+         let most = 20
+         let least = 0
+         
+@@ -137,11 +137,9 @@
+ 
+         let ptr = UnsafeMutablePointer<Int32>(OpaquePointer(maskSegmentation.dataPointer))
+         
+-        
+-        let wantedValue = ptr[Int(x) * xStride + Int(y) * yStride]
++        let wantedValue = ptr[Int(model_x) * xStride + Int(model_y) * yStride]
+         print(wantedValue)
+         
+-        
+         var pixels = [UInt8](repeating: 255, count: (width * height) )
+         
+ //        let scaled = (value - most) * T(255) / (most - least)

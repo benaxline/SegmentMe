@@ -26,8 +26,8 @@ struct ContentView: View {
                             Image(inputImage, scale: 1, label: Text("Input Image"))
                                 .resizable()
                                 .scaledToFit()
-                                .frame(maxHeight: 400)
-                                .padding(0)
+                                .frame(height: 400)
+                                .padding()
                                 .onContinuousHover(perform: { phase in
                                     switch phase {
                                     case .active (let location):
@@ -47,7 +47,7 @@ struct ContentView: View {
                                 
                         } else {
                             Text("Select an Image")
-                                .frame(maxHeight: 400)
+                                .frame(height: 400)
                                 .padding()
                         }
                         
@@ -55,7 +55,7 @@ struct ContentView: View {
                             Image(segmentedImage, scale: 1, label: Text("Segmented Image"))
                                 .resizable()
                                 .scaledToFit()
-                                .frame(maxHeight: 400)
+                                .frame(height: 400)
                                 .padding()
                                 .overlay {
                                     Circle()
@@ -106,24 +106,24 @@ struct ContentView: View {
         print("Original Image: \(imageWidth), \(imageHeight)")
         
         // rounded coordinates
-        let x = self.clickLocation.x.rounded()
-        let y = self.clickLocation.y.rounded()
+        var x = self.clickLocation.x.rounded()
+        var y = self.clickLocation.y.rounded()
         print("Clicked Location: (\(x), \(y))")
-
-        // Compute the expected width of the image given that we constrain the height to be 400
-        let display_width = 400.0 * Double(imageWidth) / Double( imageHeight )
         
-        // Compute the normalized location of the click, where the top-left is (0,0), and bottom right is (1,1)
-        let norm_x = x / display_width
-        let norm_y = y / 400.0
-
-        // scale coordinates up to the image coordinates
-        print("Normalized Location: (\(norm_x), \(norm_y))")
+        // scale coordinates
+        let wScale = (Float(imageWidth) / Float(imageHeight)) * 400
         
-        let model_x = CGFloat(norm_x * 513.0)
-        let model_y = CGFloat(norm_y * 513.0)
-        print("Scaled Location: (\(model_x), \(model_y))")
-                
+        x = CGFloat(Float(x) / Float(400))          // displayed height is 400
+        y = CGFloat(Float(y) / Float(400))       // displayed width is
+        print("Normalized Location: (\(x), \(y))")
+        
+        x = CGFloat(Float(x) * 513)
+        y = CGFloat(Float(y) * 513)
+        print("Scaled Location: (\(x), \(y))")
+        
+        x = x.rounded()
+        y = y.rounded()
+        
         let most = 20
         let least = 0
         
